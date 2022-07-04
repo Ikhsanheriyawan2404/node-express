@@ -1,5 +1,6 @@
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
+const contacts = require('./utils/contacts');
 
 const app = express();
 const port = 1234;
@@ -13,7 +14,6 @@ app.get('/', (req, res) => {
     res.render('index', {
         layout: 'layouts/main',
         title: 'Halaman Home',
-        // mahasiswa: contact,
     });
 });
 
