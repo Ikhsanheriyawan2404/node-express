@@ -37,4 +37,10 @@ const checkDuplicate = (nik) => {
     return contacts.find((contact) => contact.nik === nik);
 }
 
-module.exports = { loadContacts, findContact, addContact, checkDuplicate }
+const deleteContact = (nik) => {
+    const contacts = loadContacts();
+    const filteredContacts = contacts.filter((contact) => contact.nik !== nik );
+    saveContacts(filteredContacts);
+}
+
+module.exports = { loadContacts, findContact, addContact, checkDuplicate, deleteContact }

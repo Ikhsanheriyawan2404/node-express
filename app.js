@@ -1,6 +1,10 @@
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
 const contacts = require('./utils/contacts');
+const { body, validationResult } = require('express-validator');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const flash = require('connect-flash');
 
 const app = express();
 const port = 1234;
@@ -9,6 +13,14 @@ app.set('view engine', 'ejs');
 app.use(expressLayouts);
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser('secret'));
+app.use(session({
+    cookie: { maxAge: 6000 },
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
+}))
+app.use(flash());
 
 app.get('/', (req, res) => {
     res.render('index', {
@@ -59,6 +71,18 @@ app.post('/contact', [
         res.redirect('/contact');
     }
 });
+
+app.delete('/contact/:nik', (req, res) => {
+    const contact = contacts.findContact(req.params.nik);
+    if (!contact) {
+        res.status(404);
+        res.send('<h1>404</h1>');
+    } else {
+        contacts.deleteContact(req.params.nik);
+        req.flash('msg', 'Data kontak berhasil dihapus!');
+        res.redirect('/contact');
+    }
+})
 
 app.get('/contact/:nik', (req, res) => {
     const contact = contacts.findContact(req.params.nik);
