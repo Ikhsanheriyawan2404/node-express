@@ -27,6 +27,39 @@ app.get('/contact', (req, res) => {
     });
 });
 
+app.get('/contact/create', (req, res) => {
+    res.render('create', {
+        layout: 'layouts/main',
+        title: 'Halaman Tambah Kontak',
+    });
+});
+
+app.post('/contact', [
+    body('nik').custom((value) => {
+        const duplicate = contacts.checkDuplicate(value);
+        if (duplicate) {
+            throw new Error('NIK sudah terdaftar!');
+        }
+        return true;
+    }),
+    body('nik').isNumeric(),
+    body('name').isLength({ min: 3 })
+],
+    (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.render('create', {
+            layout: 'layouts/main',
+            title: 'Form Tambah Kontak',
+            errors: errors.array()
+        })
+    } else {
+        contacts.addContact(req.body);
+        req.flash('msg', 'Data kontak berhasil ditambahkan!');
+        res.redirect('/contact');
+    }
+});
+
 app.get('/contact/:nik', (req, res) => {
     const contact = contacts.findContact(req.params.nik);
     res.render('detail', {

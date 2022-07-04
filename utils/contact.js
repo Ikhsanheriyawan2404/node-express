@@ -22,4 +22,14 @@ const findContact = (nik) => {
     return contact;
 }
 
-module.exports = { loadContacts, findContact }
+const saveContacts = (contacts) => {
+    fs.writeFileSync('data/contacts.json', JSON.stringify(contacts, null, 4));
+}
+
+const addContact = (contact) => {
+    contacts = loadContacts();
+    contacts.push(contact);
+    saveContacts(contacts);
+}
+
+module.exports = { loadContacts, findContact, addContact }
