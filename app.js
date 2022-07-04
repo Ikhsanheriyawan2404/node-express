@@ -72,7 +72,7 @@ app.post('/contact', [
     }
 });
 
-app.delete('/contact/:nik', (req, res) => {
+app.post('/contact/:nik', (req, res) => {
     const contact = contacts.findContact(req.params.nik);
     if (!contact) {
         res.status(404);
