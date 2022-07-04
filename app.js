@@ -29,6 +29,7 @@ app.get('/', (req, res) => {
     });
 });
 
+// Read Contacts
 app.get('/contact', (req, res) => {
     const data = contacts.loadContacts();
     res.render('contact', {
@@ -39,6 +40,8 @@ app.get('/contact', (req, res) => {
     });
 });
 
+
+// View Create Contact
 app.get('/contact/create', (req, res) => {
     res.render('create', {
         layout: 'layouts/main',
@@ -46,6 +49,7 @@ app.get('/contact/create', (req, res) => {
     });
 });
 
+// Create Contact
 app.post('/contact', [
     body('nik').custom((value) => {
         const duplicate = contacts.checkDuplicate(value);
@@ -72,6 +76,49 @@ app.post('/contact', [
     }
 });
 
+
+// View Update Contact
+app.get('/contact/edit/:nik', (req, res) => {
+    const contact = contacts.findContact(req.params.nik);
+    res.render('edit', {
+        layout: 'layouts/main',
+        title: 'Halaman Edit Contact',
+        contact,
+    });
+});
+
+
+// Update Contact
+app.post('/contact/update/:nik', [
+    body('nik').custom((value, { req }) => {
+        const duplicate = contacts.checkDuplicate(value);
+        if (value !== req.body.oldNik && duplicate) {
+            throw new Error('NIK sudah terdaftar!');
+        }
+        return true;
+    }),
+    body('nik').isNumeric(),
+    body('name').isLength({ min: 3 })
+],
+    (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const contact = contacts.findContact(req.params.nik);
+        res.render('edit', {
+            layout: 'layouts/main',
+            title: 'Form Edit Kontak',
+            errors: errors.array(),
+            contact,
+        })
+    } else {
+        contacts.updateContact(req.body);
+        req.flash('msg', 'Data kontak berhasil diedit!');
+        res.redirect('/contact');
+    }
+});
+
+
+// Delete Contact
 app.post('/contact/:nik', (req, res) => {
     const contact = contacts.findContact(req.params.nik);
     if (!contact) {
@@ -84,6 +131,7 @@ app.post('/contact/:nik', (req, res) => {
     }
 })
 
+// View Detail Contact
 app.get('/contact/:nik', (req, res) => {
     const contact = contacts.findContact(req.params.nik);
     res.render('detail', {

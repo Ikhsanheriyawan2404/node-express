@@ -43,4 +43,12 @@ const deleteContact = (nik) => {
     saveContacts(filteredContacts);
 }
 
-module.exports = { loadContacts, findContact, addContact, checkDuplicate, deleteContact }
+const updateContact = (newContact) => {
+    const contacts = loadContacts();
+    const filteredContacts = contacts.filter((contact) => contact.nik !== newContact.oldNik);
+    delete newContact.oldNik;
+    filteredContacts.push(newContact);
+    saveContacts(filteredContacts);
+}
+
+module.exports = { loadContacts, findContact, addContact, checkDuplicate, deleteContact, updateContact }
