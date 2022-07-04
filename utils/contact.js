@@ -32,4 +32,9 @@ const addContact = (contact) => {
     saveContacts(contacts);
 }
 
-module.exports = { loadContacts, findContact, addContact }
+const checkDuplicate = (nik) => {
+    const contacts = loadContacts();
+    return contacts.find((contact) => contact.nik === nik);
+}
+
+module.exports = { loadContacts, findContact, addContact, checkDuplicate }
