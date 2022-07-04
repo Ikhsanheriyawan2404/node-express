@@ -16,4 +16,10 @@ const loadContacts = () => {
     return contacts;
 }
 
-module.exports = { loadContacts }
+const findContact = (nik) => {
+    const contacts = loadContacts();
+    const contact = contacts.find((contact) => contact.nik === nik);
+    return contact;
+}
+
+module.exports = { loadContacts, findContact }

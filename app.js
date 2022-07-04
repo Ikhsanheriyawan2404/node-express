@@ -27,6 +27,15 @@ app.get('/contact', (req, res) => {
     });
 });
 
+app.get('/contact/:nik', (req, res) => {
+    const contact = contacts.findContact(req.params.nik);
+    res.render('detail', {
+        layout: 'layouts/main',
+        title: 'Halaman Detail Contact',
+        contact,
+    });
+});
+
 app.use((req, res) => {
     res.status(404);
     res.send('<h1>404</h1>')
